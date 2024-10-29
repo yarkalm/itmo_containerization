@@ -1,21 +1,21 @@
-# Используем более "жирный" образ Jupyter
-FROM jupyter/scipy-notebook:latest
+# Используем более большой "жирный" образ
+FROM jupyter/datascience-notebook:latest
 
 USER root
-# Разделение команд в отдельные слои
-RUN apt update && \
-    apt -y install python3-dev git vim nano
-RUN apt update
-RUN apt -y install python3-pip
-RUN pip install --upgrade pip 
-RUN pip install jupyterhub
+
+# Разделение команд на отдельные слои
+RUN apt-get update && apt-get install -y \
+    git \
+    vim
+RUN rm -rf /var/lib/apt/lists/*
+RUN pip install numpy pandas matplotlib scikit-learn
 
 USER jovyan
-# Копируем все файлы из проекта в рабочую директорию
-COPY . /home/jovyan/jupyter
+# Копируем все файлы из проекта в рабочую директорию контейнера
+COPY . /home/jovyan/work
 
 # Устанавливаем рабочую директорию
-WORKDIR /home/jovyan/jupyter
+WORKDIR /home/jovyan/work
 
-# Запускаем JupyterHub с нужным уровнем логирования
-ENTRYPOINT ["jupyterhub", "--log-level=DEBUG"]
+# Запускаем Jupyter Notebook
+CMD ["start-notebook.sh", "--NotebookApp.token=''"]
