@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Одноразовый сервис инициализации
+  init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: init_container
+    command: /bin/sh -c "echo 'Initializing data...'"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - main_network
+
+  # Jupyter Notebook приложение
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jupyter_notebook
+    ports:
+      - "${JUPYTER_PORT}:8888"   
+    volumes:
+      - ./work:/home/jovyan/work 
+    depends_on:
+      - db                       # Сервис зависит от БД
+    command: ["start-notebook.sh", "--NotebookApp.token=''"]
+    networks:
+      - main_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Сервис базы данных (PostgreSQL)
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  main_network:
+    driver: bridge
+
+volumes:
+  db_data:
