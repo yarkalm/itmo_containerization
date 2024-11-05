@@ -17,5 +17,8 @@ ADD data.csv /home/jovyan/work
 # Устанавливаем рабочую директорию
 WORKDIR /home/jovyan/work
 
+# Смонтируем volume
+VOLUME /home/jovyan/work
+
 # Запускаем Jupyter Notebook
 CMD ["start-notebook.sh", "--NotebookApp.token=''"]
