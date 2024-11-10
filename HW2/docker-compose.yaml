@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: app/init_image
     container_name: init_container
     command: /bin/sh -c "echo 'Initializing data...'"
     depends_on:
@@ -22,6 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: app/jupyter_image
     container_name: jupyter_notebook
     ports:
       - "${JUPYTER_PORT}:8888"   
