@@ -11,10 +11,8 @@ services:
     command: /bin/sh -c "echo 'Initializing data...'"
     depends_on:
       - db
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+    env_file:
+      - .env
     networks:
       - main_network
 
@@ -32,6 +30,8 @@ services:
     depends_on:
       - db                       # Сервис зависит от БД
     command: ["start-notebook.sh", "--NotebookApp.token=''"]
+    env_file:
+      - .env
     networks:
       - main_network
     healthcheck:
@@ -44,10 +44,8 @@ services:
   db:
     image: postgres:latest
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - .env
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
