@@ -17,5 +17,27 @@
 1. Переходим в директорию `cd postgres` и создаём все объекты в порядке `Secrets -> ConfigMap -> Deployment`. Для упрощения запуска все файлы пронумерованы и достаточно запустить команду `kubectl create –f .`
    ![image](https://github.com/user-attachments/assets/46d3bae8-5125-4745-aaf7-3d604a31c1e7)
 
-3. Проверим, что всё успешно создалось в помощью `kubectl get тип_ресурса`
+2. Проверим, что всё успешно создалось в помощью `kubectl get тип_ресурса`
    ![image](https://github.com/user-attachments/assets/c45d82dc-1697-4051-b0d9-9696490d0e50)
+
+### Nextcloud
+
+1. Вернёмся в предыдущую директорию `cd ..`. Прогоним все манифесты командой `kubectl create –f .`.
+   ![image](https://github.com/user-attachments/assets/da4e0c18-e89d-401d-ace9-2d86ad422684)
+2. Проверим состояние с помощью `kubectl logs ...`
+   ![image](https://github.com/user-attachments/assets/1ec1c411-d5db-4d02-8772-5c7b9fb9ea6f)
+3. Выполним перенаправление портов `kubectl expose deployment nextcloud --type=NodePort --port=80`
+   ![image](https://github.com/user-attachments/assets/69980bcb-693b-4b40-bd8b-35e805693adf)
+4. Запустим туннелирование `minikube service nextcloud`
+   ![image](https://github.com/user-attachments/assets/cf38e268-a966-4680-9909-b1de49f5b551)
+5. Наблюдаем успешный запуск и радуемся
+   ![image](https://github.com/user-attachments/assets/b54a386b-360b-48f3-924b-becb0e5af8bd)
+  
+
+
+## Ответы на вопросы:
+1. Вопрос: важен ли порядок выполнения этих манифестов? Почему?
+   - В Kubernetes порядок выполнения манифестов может быть важен в зависимости от того, как они используются и зависят друг от друга.
+2. Вопрос: что (и почему) произойдет, если отскейлить количество реплик postgres-deployment в 0,
+затем обратно в 1, после чего попробовать снова зайти на Nextcloud?
+   - В нашем случае при отскейле реплик postgres-deployment в 0, то мы потеряем данные, которые хранились в postgres.
