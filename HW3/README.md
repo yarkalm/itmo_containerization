@@ -22,10 +22,10 @@
 
 ### Nextcloud
 
-1. Вернёмся в предыдущую директорию `cd ..`. Прогоним все манифесты командой `kubectl create –f .`.
-   ![image](https://github.com/user-attachments/assets/da4e0c18-e89d-401d-ace9-2d86ad422684)
+1. Вернёмся в предыдущую директорию `cd ..`. Прогоним все манифесты командой `kubectl apply –f .`.
+   ![image](https://github.com/user-attachments/assets/6cbd9554-d1e1-4529-a5c1-d63290279146)
 2. Проверим состояние с помощью `kubectl logs ...`
-   ![image](https://github.com/user-attachments/assets/1ec1c411-d5db-4d02-8772-5c7b9fb9ea6f)
+   ![image](https://github.com/user-attachments/assets/d2b5e1ca-6253-4670-bc0a-c15c5a5f0d4a)
 3. Выполним перенаправление портов `kubectl expose deployment nextcloud --type=NodePort --port=80`
    ![image](https://github.com/user-attachments/assets/69980bcb-693b-4b40-bd8b-35e805693adf)
 4. Запустим туннелирование `minikube service nextcloud`
