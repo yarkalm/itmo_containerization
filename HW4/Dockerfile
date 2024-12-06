@@ -1,0 +1,21 @@
+# Используем легковесный образ
+FROM jupyter/minimal-notebook:latest
+
+USER root
+
+# Соединим команд в два слоя
+RUN apt-get update && apt-get install -y \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install numpy pandas matplotlib scikit-learn
+
+USER jovyan
+# Копируем только файл датасета в наш docker
+ADD data.csv /home/jovyan/work
+
+# Устанавливаем рабочую директорию
+WORKDIR /home/jovyan/work
+
+# Запускаем Jupyter Notebook
+CMD ["start-notebook.sh", "--NotebookApp.token=''"]

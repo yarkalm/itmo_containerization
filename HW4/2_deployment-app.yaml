@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      initContainers:
+      - name: init-container
+        image: app/init_image:latest
+        imagePullPolicy: Never
+        command: ["/bin/sh", "-c", "echo 'Initializing data...'"]
+        envFrom:
+          - configMapRef:
+              name: app-config
+      containers:
+      - name: app-container
+        image: app/init_image:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8888
+        volumeMounts:
+        - name: app-data
+          mountPath: /home/jovyan/work
+        envFrom:
+          - configMapRef:
+              name: app-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: db-pvc
